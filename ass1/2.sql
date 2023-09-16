@@ -8,8 +8,11 @@ CREATE TABLE IF NOT EXISTS DimensionDay
     month_abbr character(3) ,
     quarter integer ,
     year integer ,
-    fiscal_period integer
+    fiscal_period character(6)
 );
+
+
+
 -- the following needs modification for day range and for fiscal_period
 with recursive days (fulldate) as
 (
@@ -19,17 +22,26 @@ with recursive days (fulldate) as
     where fullDate < (select max(order_date) from orders)
 )
 
-insert into DimensionDay (fullDate,month_name,month_abbr,quarter,year)
+insert into DimensionDay (fullDate,month_name,month_abbr,quarter,year, fiscal_period)
 select fullDate ,
     TO_CHAR (fullDate, 'Month') as month_name,
     TO_CHAR (fullDate, 'Mon') as month_abbr,
     extract (QUARTER from fullDate) as quarter,
-    extract (YEAR from fullDate) as year
+    extract (YEAR from fullDate) as year,
+    'DY' || extract(YEAR FROM fulldate) AS fiscal_period
+
 --
 -- need to get the fiscal period too
 --
 from days;
+
 select * from DimensionDay
+
+
+
+
+
+
 
 
 --
