@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS DimensionDay
 -- the following needs modification for day range and for fiscal_period
 with recursive days (fulldate) as
 (
-    values (to_date('1997-01-01','YYYYMMDD'))
+    select min(order_date) from orders
     union
     select fullDate + integer '1' from days
     where fullDate < (select max(order_date) from orders)
@@ -28,7 +28,7 @@ select fullDate ,
     TO_CHAR (fullDate, 'Mon') as month_abbr,
     extract (QUARTER from fullDate) as quarter,
     extract (YEAR from fullDate) as year,
-    'DY' || extract(YEAR FROM fulldate) AS fiscal_period
+    'FY' || extract(YEAR FROM fulldate) AS fiscal_period
 
 --
 -- need to get the fiscal period too
@@ -36,11 +36,6 @@ select fullDate ,
 from days;
 
 select * from DimensionDay
-
-
-
-
-
 
 
 
@@ -66,12 +61,9 @@ CREATE TABLE DimensionEmployee
     home_phone character varying(24),
     reports_to smallint
 );
-insert into DimensionEmployee (employee_id, last_name, first_name,
-title, title_of_courtesy, birth_date, hire_date, address, city,
-region, postal_code, country, home_phone, reports_to)
-select employee_id, last_name, first_name,
-title, title_of_courtesy, birth_date, hire_date, address, city,
-region, postal_code, country, home_phone, reports_to
+
+insert into DimensionEmployee (employee_id, last_name, first_name, title, title_of_courtesy, birth_date, hire_date, address, city, region, postal_code, country, home_phone, reports_to)
+select employee_id, last_name, first_name, title, title_of_courtesy, birth_date, hire_date, address, city, region, postal_code, country, home_phone, reports_to
 from employees;
 select * from DimensionEmployee;
 
@@ -184,19 +176,19 @@ ORDER BY c.category_name, p.product_name
 
 
 select dp.product_name, ofs.product_key, dp.category_id, dd.month_name, de.title, dc.country, ofs.order_dollars
-from order_facts ofs inner join DimensionProduct dp on ofs.product_key = dp.product_key
-inner join Dimensionday dd on ofs.day_key = dd.day_key
-inner join DimensionEmployee de on ofs.employee_key = de.employee_key
-inner join DimensionCustomer dc on ofs.customer_key = dc.customer_key
-where dp.category_name = 'Beverages' and TRIM(dd.month_name) = 'April' and de.title = 'Sales Representative' and (dc.country = 'Germany' or dc.country = 'France')
+FROM order_facts ofs INNER JOIN DimensionProduct dp ON ofs.product_key = dp.product_key
+INNER JOIN Dimensionday dd on ofs.day_key = dd.day_key
+INNER JOIN DimensionEmployee de on ofs.employee_key = de.employee_key
+INNER JOIN DimensionCustomer dc on ofs.customer_key = dc.customer_key
+WHERE dp.category_name = 'Beverages' and TRIM(dd.month_name) = 'April' and de.title = 'Sales Representative' and (dc.country = 'Germany' or dc.country = 'France')
 
 
-select sum(ofs.order_dollars)
-from order_facts ofs inner join DimensionProduct dp on ofs.product_key = dp.product_key
-inner join Dimensionday dd on ofs.day_key = dd.day_key
-inner join DimensionEmployee de on ofs.employee_key = de.employee_key
-inner join DimensionCustomer dc on ofs.customer_key = dc.customer_key
-where dp.category_name = 'Beverages' and TRIM(dd.month_name) = 'April' and de.title = 'Sales Representative' and (dc.country = 'Germany' or dc.country = 'France')
+SELECT sum(ofs.order_dollars)
+FROM order_facts ofs INNER JOIN DimensionProduct dp ON ofs.product_key = dp.product_key
+INNER JOIN Dimensionday dd ON ofs.day_key = dd.day_key
+INNER JOIN DimensionEmployee de ON ofs.employee_key = de.employee_key
+INNER JOIN DimensionCustomer dc ON ofs.customer_key = dc.customer_key
+WHERE dp.category_name = 'Beverages' AND TRIM(dd.month_name) = 'April' AND de.title = 'Sales Representative' AND (dc.country = 'Germany' OR dc.country = 'France')
 
 
 
@@ -235,13 +227,13 @@ inner join customers cu on o.customer_id = cu.customer_id
 where c.category_name = 'Beverages' and extract(MONTH from o.order_date) = 4 and e.title = 'Sales Representative' and (cu.country = 'Germany' or cu.country = 'France')
 
 
-select SUM(od.unit_price * od.quantity)
-from order_details od inner join products p on od.product_id = p.product_id
-inner join categories c on p.category_id = c.category_id
-inner join orders o on od.order_id = o.order_id
-inner join employees e on o.employee_id = e.employee_id
-inner join customers cu on o.customer_id = cu.customer_id 
-where c.category_name = 'Beverages' and extract(MONTH from o.order_date) = 4 and e.title = 'Sales Representative' and (cu.country = 'Germany' or cu.country = 'France')
+SELECT SUM(od.unit_price * od.quantity)
+FROM order_details od INNER JOIN products p ON od.product_id = p.product_id
+INNER JOIN categories c ON p.category_id = c.category_id
+INNER JOIN orders o ON od.order_id = o.order_id
+INNER JOIN employees e ON o.employee_id = e.employee_id
+INNER JOIN customers cu ON o.customer_id = cu.customer_id 
+WHERE c.category_name = 'Beverages' AND EXTRACT(MONTH from o.order_date) = 4 AND e.title = 'Sales Representative' AND (cu.country = 'Germany' OR cu.country = 'France')
 
 
 -------------------------------------------
