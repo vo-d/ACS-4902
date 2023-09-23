@@ -237,23 +237,3 @@ WHERE c.category_name = 'Beverages' AND EXTRACT(MONTH from o.order_date) = 4 AND
 
 
 -------------------------------------------
-
-
-select * from order_details
-
-select * from categories
-
-select * from products
-
-select * from orders
-
-select * from employees
-
-select * from customers
-
-
-select od.order_id, p.product_id, c.category_name, o.order_date
-from order_details od inner join products p on od.product_id = p.product_id
-inner join categories c on p.category_id = c.category_id
-inner join orders o on o.order_id = od.order_id
-where c.category_name = 'Beverages' and extract(MONTH from o.order_date) = 4 
