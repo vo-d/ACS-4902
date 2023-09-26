@@ -35,9 +35,6 @@ select fullDate ,
 --
 from days;
 
-select * from DimensionDay
-
-
 
 --
 
@@ -65,8 +62,6 @@ CREATE TABLE DimensionEmployee
 insert into DimensionEmployee (employee_id, last_name, first_name, title, title_of_courtesy, birth_date, hire_date, address, city, region, postal_code, country, home_phone, reports_to)
 select employee_id, last_name, first_name, title, title_of_courtesy, birth_date, hire_date, address, city, region, postal_code, country, home_phone, reports_to
 from employees;
-select * from DimensionEmployee;
-
 
 
 --
@@ -93,7 +88,6 @@ region , postal_code , country , phone , fax)
 select customer_id, company_name, contact_name , contact_title , city , region , postal_code , country
 , phone , fax
 from customers;
-select * from DimensionCustomer;
 
 
 --
@@ -112,7 +106,6 @@ insert into DimensionProduct (product_id, product_name, unit_price, category_id,
 description)
 select product_id, product_name, unit_price, c.category_id, category_name, description
 from products p natural join categories c;
-select * from DimensionProduct;
 
 --
 
@@ -138,7 +131,6 @@ inner join DimensionEmployee e on (o.employee_id = e.employee_id)
 inner join DimensionCustomer c on (o.customer_id = c.customer_id)
 GROUP BY p.product_key, e.employee_key, c.customer_key,d.day_key
 ;
-select * from order_facts;
 
 
 --
@@ -236,4 +228,4 @@ INNER JOIN customers cu ON o.customer_id = cu.customer_id
 WHERE c.category_name = 'Beverages' AND EXTRACT(MONTH from o.order_date) = 4 AND e.title = 'Sales Representative' AND (cu.country = 'Germany' OR cu.country = 'France')
 
 
--------------------------------------------
+-------------------------------------------NN
