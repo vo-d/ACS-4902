@@ -175,8 +175,8 @@ INNER JOIN DimensionCustomer dc on ofs.customer_key = dc.customer_key
 WHERE dp.category_name = 'Beverages' and TRIM(dd.month_name) = 'April' and de.title = 'Sales Representative' and (dc.country = 'Germany' or dc.country = 'France')
 
 
-SELECT sum(ofs.order_dollars)
-FROM order_facts ofs INNER JOIN DimensionProduct dp ON ofs.product_key = dp.product_key
+SELECT sum(ofs.order_dollars) as total_sales
+FROM order_facts ofs INNER JOIN DimensionProduct dp ON ofs.product_key = ndp.product_key
 INNER JOIN Dimensionday dd ON ofs.day_key = dd.day_key
 INNER JOIN DimensionEmployee de ON ofs.employee_key = de.employee_key
 INNER JOIN DimensionCustomer dc ON ofs.customer_key = dc.customer_key
@@ -219,7 +219,7 @@ inner join customers cu on o.customer_id = cu.customer_id
 where c.category_name = 'Beverages' and extract(MONTH from o.order_date) = 4 and e.title = 'Sales Representative' and (cu.country = 'Germany' or cu.country = 'France')
 
 
-SELECT SUM(od.unit_price * od.quantity)
+SELECT SUM(od.unit_price * od.quantity) as total_sales
 FROM order_details od INNER JOIN products p ON od.product_id = p.product_id
 INNER JOIN categories c ON p.category_id = c.category_id
 INNER JOIN orders o ON od.order_id = o.order_id
